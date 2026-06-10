@@ -13,47 +13,32 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "All fields required!" });
   }
 
+  // Gmail SMTP — most trusted sending method
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false,
+    secure: false, // TLS
     auth: {
       user: gmailAddress,
       pass: appPassword,
     },
-    tls: { rejectUnauthorized: false },
+    tls: {
+      rejectUnauthorized: false,
+    },
   });
 
-  // Plain text — exactly what user typed, nothing extra
+  // Pure plain text only — NO HTML at all
+  // Plain text emails have lowest spam score
   const plainText = body;
-
-  // HTML — only body text, no name, no border, no signature
-  const htmlLines = body
-    .split("\n")
-    .map(function(line) {
-      return line.trim() === ""
-        ? "<br>"
-        : "<p style='margin:0 0 12px 0;'>" + line + "</p>";
-    })
-    .join("");
-
-  const htmlEmail =
-    "<!DOCTYPE html>" +
-    "<html><head><meta charset='UTF-8'></head>" +
-    "<body style='margin:0;padding:0;background:#ffffff;'>" +
-    "<div style='max-width:560px;margin:0;padding:20px;font-family:Arial,sans-serif;font-size:15px;color:#222222;line-height:1.7;'>" +
-    htmlLines +
-    "</div>" +
-    "</body></html>";
 
   try {
     await transporter.sendMail({
       from: '"' + (senderName || gmailAddress) + '" <' + gmailAddress + '>',
       to: to,
-      replyTo: gmailAddress,
       subject: subject,
+      // ONLY plain text — no HTML version
+      // This is exactly how a real person sends email
       text: plainText,
-      html: htmlEmail,
     });
 
     return res.status(200).json({ status: "sent", email: to });
