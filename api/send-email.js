@@ -13,34 +13,24 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "All fields required!" });
   }
 
-  // Gmail SMTP — most trusted sending method
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
-    secure: false, // TLS
+    secure: false,
     auth: {
       user: gmailAddress,
       pass: appPassword,
     },
-    tls: {
-      rejectUnauthorized: false,
-    },
+    tls: { rejectUnauthorized: false },
   });
-
-  // Pure plain text only — NO HTML at all
-  // Plain text emails have lowest spam score
-  const plainText = body;
 
   try {
     await transporter.sendMail({
       from: '"' + (senderName || gmailAddress) + '" <' + gmailAddress + '>',
       to: to,
       subject: subject,
-      // ONLY plain text — no HTML version
-      // This is exactly how a real person sends email
-      text: plainText,
+      text: body,   // plain text only — lowest spam score
     });
-
     return res.status(200).json({ status: "sent", email: to });
   } catch (err) {
     return res.status(200).json({ status: "failed", email: to, error: err.message });
