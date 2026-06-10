@@ -24,25 +24,25 @@ export default async function handler(req, res) {
     tls: { rejectUnauthorized: false },
   });
 
-  // Plain text — no signature, no extra lines
+  // Plain text — exactly what user typed, nothing extra
   const plainText = body;
 
-  // Clean HTML — no dotted line, no border, just message + name
+  // HTML — only body text, no name, no border, no signature
   const htmlLines = body
     .split("\n")
     .map(function(line) {
-      return line.trim() === "" ? "<br>" : "<p style='margin:0 0 10px 0;'>" + line + "</p>";
+      return line.trim() === ""
+        ? "<br>"
+        : "<p style='margin:0 0 12px 0;'>" + line + "</p>";
     })
     .join("");
 
   const htmlEmail =
     "<!DOCTYPE html>" +
-    "<html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'></head>" +
+    "<html><head><meta charset='UTF-8'></head>" +
     "<body style='margin:0;padding:0;background:#ffffff;'>" +
-    "<div style='max-width:560px;margin:0 auto;padding:24px;font-family:Arial,sans-serif;font-size:15px;color:#222222;line-height:1.7;'>" +
+    "<div style='max-width:560px;margin:0;padding:20px;font-family:Arial,sans-serif;font-size:15px;color:#222222;line-height:1.7;'>" +
     htmlLines +
-    "<br>" +
-    "<div style='font-size:14px;color:#444444;margin-top:4px;'>" + (senderName || "") + "</div>" +
     "</div>" +
     "</body></html>";
 
