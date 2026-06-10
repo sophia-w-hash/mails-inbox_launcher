@@ -49,15 +49,14 @@
       transition: border 0.2s;
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
-    input::placeholder, textarea::placeholder { color: #b0bec5; }
+    input::placeholder, textarea::placeholder { color: #b0bec5; font-size: 15px; }
     textarea { min-height: 150px; resize: vertical; line-height: 1.7; }
     .pass-wrap { position: relative; }
     .eye-btn {
       position: absolute; right: 14px; top: 50%;
       transform: translateY(-50%);
       background: none; border: none;
-      cursor: pointer; font-size: 13px;
-      color: #4f7dff; font-weight: 600;
+      cursor: pointer; font-size: 16px; color: #4f7dff;
     }
     .btns {
       display: grid;
@@ -79,8 +78,8 @@
     .btn:hover { background: #3a6aee; }
     .btn:disabled { background: #a0aec0; cursor: not-allowed; }
     .status {
-      margin-top: 18px;
-      padding: 13px 18px;
+      margin-top: 20px;
+      padding: 14px 18px;
       border-radius: 10px;
       font-size: 14px;
       font-weight: 600;
@@ -90,38 +89,16 @@
     .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-    .progress-wrap { margin-top: 14px; display: none; }
-    .progress-wrap.show { display: block; }
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
-    .progress-label { font-size: 13px; font-weight: 600; color: #64748b; }
-    .progress-counter { font-size: 16px; font-weight: 800; color: #2563eb; }
-    .progress-bar-bg {
-      width: 100%; height: 8px;
-      background: #e2e8f0; border-radius: 99px; overflow: hidden;
-    }
-    .progress-bar {
-      height: 100%;
-      background: linear-gradient(90deg, #4f7dff, #38bdf8);
-      border-radius: 99px;
-      transition: width 0.2s ease;
-      width: 0%;
-    }
-    .log-wrap { margin-top: 24px; display: none; }
+    .log-wrap { margin-top: 26px; display: none; }
     .log-wrap.show { display: block; }
     .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead tr { background: #f1f5f9; }
     th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; }
     th { font-weight: 700; color: #64748b; font-size: 11px; letter-spacing: 0.8px; }
-    .badge { border-radius: 6px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; display: inline-block; }
+    .badge { border-radius: 6px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; }
     .badge.sent    { background: #16a34a; }
     .badge.failed  { background: #dc2626; }
-    .badge.pending { background: #94a3b8; }
     .badge.sending { background: #2563eb; }
     .csv-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     .btn-csv {
@@ -139,7 +116,7 @@
 <body>
 <div class="card">
 
-  <div class="title">Fast Mail Launcher</div>
+  <div class="title">📧 Fast Mail Launcher</div>
 
   <div class="row">
     <input type="text"  id="senderName"   placeholder="Sender Name" />
@@ -149,18 +126,18 @@
   <div class="row">
     <div class="pass-wrap">
       <input type="password" id="appPassword" placeholder="App Password" />
-      <button class="eye-btn" id="eyeBtn" onclick="togglePass()">Show</button>
+      <button class="eye-btn" onclick="togglePass()">👁</button>
     </div>
     <input type="text" id="subject" placeholder="Subject" />
   </div>
 
   <div class="row">
-    <textarea id="body" placeholder="Message Body"></textarea>
+    <textarea id="body"       placeholder="Message Body"></textarea>
     <div>
       <textarea id="recipients" placeholder="Recipients (comma or newline)"></textarea>
       <div class="csv-row">
         <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(event)" />
-        <button class="btn-csv" onclick="document.getElementById('csvFile').click()">Upload CSV</button>
+        <button class="btn-csv" onclick="document.getElementById('csvFile').click()">📂 Upload CSV</button>
         <span class="csv-name" id="csvName"></span>
       </div>
     </div>
@@ -172,16 +149,6 @@
   </div>
 
   <div class="status" id="status"></div>
-
-  <div class="progress-wrap" id="progressWrap">
-    <div class="progress-top">
-      <span class="progress-label" id="progressLabel">Sending emails...</span>
-      <span class="progress-counter" id="progressCounter">0/0</span>
-    </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar" id="progressBar"></div>
-    </div>
-  </div>
 
   <div class="log-wrap" id="logWrap">
     <div class="log-title">SEND LOG</div>
@@ -195,30 +162,23 @@
 
 </div>
 <script>
-  // --- Helpers ---
   function togglePass() {
-    var i = document.getElementById('appPassword');
-    var b = document.getElementById('eyeBtn');
-    if (i.type === 'password') { i.type = 'text'; b.textContent = 'Hide'; }
-    else { i.type = 'password'; b.textContent = 'Show'; }
+    const i = document.getElementById('appPassword');
+    i.type = i.type === 'password' ? 'text' : 'password';
   }
 
   function parseRecipients(text) {
-    return text.split(/[\n,]+/)
-      .map(function(e){ return e.trim(); })
-      .filter(function(e){ return e.indexOf('@') > -1; });
+    return text.split(/[\n,]+/).map(e => e.trim()).filter(e => e.includes('@'));
   }
 
   function handleCSV(e) {
-    var file = e.target.files[0];
+    const file = e.target.files[0];
     if (!file) return;
     document.getElementById('csvName').textContent = file.name;
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      var lines = ev.target.result.split('\n').slice(1);
-      var emails = lines
-        .map(function(l){ return l.split(',')[0] ? l.split(',')[0].trim() : ''; })
-        .filter(function(e){ return e && e.indexOf('@') > -1; });
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const lines = ev.target.result.split('\n').slice(1);
+      const emails = lines.map(l => l.split(',')[0]?.trim()).filter(e => e && e.includes('@'));
       document.getElementById('recipients').value = emails.join('\n');
       showStatus('CSV loaded: ' + emails.length + ' recipients', 'success');
     };
@@ -226,138 +186,74 @@
   }
 
   function clearAll() {
-    ['senderName','gmailAddress','appPassword','subject','body','recipients'].forEach(function(id){
+    ['senderName','gmailAddress','appPassword','subject','body','recipients'].forEach(id => {
       document.getElementById(id).value = '';
     });
     document.getElementById('csvName').textContent = '';
     document.getElementById('status').className = 'status';
     document.getElementById('logWrap').className = 'log-wrap';
     document.getElementById('logBody').innerHTML = '';
-    document.getElementById('progressWrap').className = 'progress-wrap';
-    document.getElementById('progressBar').style.width = '0%';
   }
 
   function showStatus(msg, type) {
-    var s = document.getElementById('status');
+    const s = document.getElementById('status');
     s.textContent = msg;
     s.className = 'status ' + type + ' show';
   }
 
-  function setProgress(done, total) {
-    var pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    document.getElementById('progressBar').style.width = pct + '%';
-    document.getElementById('progressCounter').textContent = done + '/' + total;
-    document.getElementById('progressLabel').textContent = done >= total ? 'Done!' : 'Sending emails...';
-  }
-
-  // Send single email
-  async function sendOne(params) {
-    var res = await fetch('/api/send-email', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(params)
-    });
-    return await res.json();
-  }
-
-  // Main send function — batch of 5 parallel
   async function sendEmails() {
-    var gmailAddress = document.getElementById('gmailAddress').value.trim();
-    var appPassword  = document.getElementById('appPassword').value.trim();
-    var senderName   = document.getElementById('senderName').value.trim();
-    var subject      = document.getElementById('subject').value.trim();
-    var body         = document.getElementById('body').value.trim();
-    var recipients   = parseRecipients(document.getElementById('recipients').value);
+    const gmailAddress = document.getElementById('gmailAddress').value.trim();
+    const appPassword  = document.getElementById('appPassword').value.trim();
+    const senderName   = document.getElementById('senderName').value.trim();
+    const subject      = document.getElementById('subject').value.trim();
+    const body         = document.getElementById('body').value.trim();
+    const recipients   = parseRecipients(document.getElementById('recipients').value);
 
     if (!gmailAddress || !appPassword) return showStatus('Gmail and App Password required!', 'error');
     if (!recipients.length)            return showStatus('Add at least one recipient!', 'error');
     if (!subject || !body)             return showStatus('Subject and Body required!', 'error');
 
-    var btn = document.getElementById('sendBtn');
+    const btn = document.getElementById('sendBtn');
     btn.disabled = true;
     btn.textContent = 'Sending...';
-
-    document.getElementById('progressWrap').className = 'progress-wrap show';
-    setProgress(0, recipients.length);
     showStatus('Sending ' + recipients.length + ' emails...', 'loading');
 
-    // Build log rows
-    var logBody = document.getElementById('logBody');
+    const logBody = document.getElementById('logBody');
     document.getElementById('logWrap').className = 'log-wrap show';
-    logBody.innerHTML = recipients.map(function(email, i) {
-      return '<tr id="row-' + i + '">' +
+    logBody.innerHTML = recipients.map((email, i) =>
+      '<tr id="row-' + i + '">' +
         '<td>' + (i+1) + '</td>' +
         '<td>' + email + '</td>' +
-        '<td id="time-' + i + '">--</td>' +
-        '<td><span class="badge pending" id="badge-' + i + '">Pending</span></td>' +
-      '</tr>';
-    }).join('');
+        '<td>' + new Date().toLocaleTimeString() + '</td>' +
+        '<td><span class="badge sending">Sending...</span></td>' +
+      '</tr>'
+    ).join('');
 
-    var sentCount = 0;
-    var failCount = 0;
-    var doneCount = 0;
-    var BATCH = 3; // 5 emails parallel at a time
-
-    // Process in batches of 5
-    for (var start = 0; start < recipients.length; start += BATCH) {
-      var batchEmails = recipients.slice(start, start + BATCH);
-      var batchIndexes = [];
-
-      // Mark batch as sending
-      for (var j = 0; j < batchEmails.length; j++) {
-        var idx = start + j;
-        batchIndexes.push(idx);
-        var badge = document.getElementById('badge-' + idx);
-        var timeCell = document.getElementById('time-' + idx);
-        if (badge) { badge.className = 'badge sending'; badge.textContent = 'Sending...'; }
-        if (timeCell) timeCell.textContent = new Date().toLocaleTimeString();
-      }
-
-      // Send batch in parallel
-      var promises = batchEmails.map(function(email, j) {
-        var idx = start + j;
-        return sendOne({
-          gmailAddress: gmailAddress,
-          appPassword: appPassword,
-          to: email,
-          subject: subject,
-          body: body,
-          senderName: senderName
-        }).then(function(data) {
-          var badge = document.getElementById('badge-' + idx);
-          if (data.status === 'sent') {
-            if (badge) { badge.className = 'badge sent'; badge.textContent = 'Sent'; }
-            sentCount++;
-          } else {
-            if (badge) { badge.className = 'badge failed'; badge.textContent = 'Failed'; }
-            failCount++;
-          }
-          doneCount++;
-          setProgress(doneCount, recipients.length);
-          showStatus(
-            'Sending... ' + doneCount + '/' + recipients.length +
-            ' | Sent: ' + sentCount + ' | Failed: ' + failCount,
-            'loading'
-          );
-        }).catch(function() {
-          var badge = document.getElementById('badge-' + idx);
-          if (badge) { badge.className = 'badge failed'; badge.textContent = 'Failed'; }
-          failCount++;
-          doneCount++;
-          setProgress(doneCount, recipients.length);
-        });
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gmailAddress, appPassword, recipients, subject, body, senderName })
       });
 
-      // Wait for batch to finish before next batch
-      await Promise.all(promises);
-    }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Server error');
 
-    // Final result
-    setProgress(recipients.length, recipients.length);
-    if (failCount === 0) {
-      showStatus('All ' + sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
-    } else {
-      showStatus('Done! Sent: ' + sentCount + ' | Failed: ' + failCount + ' | Total: ' + recipients.length, sentCount > 0 ? 'success' : 'error');
+      data.results.forEach((result, i) => {
+        const badge = document.querySelector('#row-' + i + ' .badge');
+        if (badge) {
+          badge.className = 'badge ' + result.status;
+          badge.textContent = result.status === 'sent' ? 'Sent' : 'Failed';
+        }
+      });
+
+      showStatus(data.sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
+    } catch (err) {
+      recipients.forEach((_, i) => {
+        const badge = document.querySelector('#row-' + i + ' .badge');
+        if (badge) { badge.className = 'badge failed'; badge.textContent = 'Failed'; }
+      });
+      showStatus('Error: ' + err.message, 'error');
     }
 
     btn.disabled = false;
