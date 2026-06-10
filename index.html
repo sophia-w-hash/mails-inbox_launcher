@@ -49,7 +49,7 @@
       transition: border 0.2s;
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
-    input::placeholder, textarea::placeholder { color: #b0bec5; font-size: 15px; }
+    input::placeholder, textarea::placeholder { color: #b0bec5; }
     textarea { min-height: 150px; resize: vertical; line-height: 1.7; }
     .pass-wrap { position: relative; }
     .eye-btn {
@@ -78,40 +78,35 @@
     .btn:hover { background: #3a6aee; }
     .btn:disabled { background: #a0aec0; cursor: not-allowed; }
 
-    /* PROGRESS STATUS BOX */
+    /* STATUS */
     .status {
-      margin-top: 20px;
-      padding: 14px 20px;
+      margin-top: 18px;
+      padding: 13px 18px;
       border-radius: 10px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 600;
       display: none;
-      align-items: center;
-      gap: 12px;
     }
-    .status.show    { display: flex; }
+    .status.show    { display: block; }
     .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
 
-    /* PROGRESS BAR */
-    .progress-wrap {
-      margin-top: 14px;
-      display: none;
-    }
+    /* LIVE PROGRESS */
+    .progress-wrap { margin-top: 14px; display: none; }
     .progress-wrap.show { display: block; }
-    .progress-info {
+    .progress-top {
       display: flex;
       justify-content: space-between;
-      font-size: 13px;
-      font-weight: 700;
-      color: #64748b;
-      margin-bottom: 7px;
+      align-items: center;
+      margin-bottom: 8px;
     }
+    .progress-label { font-size: 13px; font-weight: 600; color: #64748b; }
     .progress-counter {
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 800;
       color: #2563eb;
+      letter-spacing: 0.5px;
     }
     .progress-bar-bg {
       width: 100%;
@@ -124,19 +119,19 @@
       height: 100%;
       background: linear-gradient(90deg, #4f7dff, #38bdf8);
       border-radius: 99px;
-      transition: width 0.4s ease;
+      transition: width 0.3s ease;
       width: 0%;
     }
 
-    /* LOG TABLE */
-    .log-wrap { margin-top: 26px; display: none; }
+    /* LOG */
+    .log-wrap { margin-top: 24px; display: none; }
     .log-wrap.show { display: block; }
     .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
     table { width: 100%; border-collapse: collapse; font-size: 13px; }
     thead tr { background: #f1f5f9; }
     th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; }
     th { font-weight: 700; color: #64748b; font-size: 11px; letter-spacing: 0.8px; }
-    .badge { border-radius: 6px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; }
+    .badge { border-radius: 6px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; display: inline-block; }
     .badge.sent    { background: #16a34a; }
     .badge.failed  { background: #dc2626; }
     .badge.sending { background: #2563eb; }
@@ -161,13 +156,11 @@
 
   <div class="title">📧 Fast Mail Launcher</div>
 
-  <!-- Row 1 -->
   <div class="row">
     <input type="text"  id="senderName"   placeholder="Sender Name" />
     <input type="email" id="gmailAddress" placeholder="Your Gmail" />
   </div>
 
-  <!-- Row 2 -->
   <div class="row">
     <div class="pass-wrap">
       <input type="password" id="appPassword" placeholder="App Password" />
@@ -176,7 +169,6 @@
     <input type="text" id="subject" placeholder="Subject" />
   </div>
 
-  <!-- Row 3 -->
   <div class="row">
     <textarea id="body"       placeholder="Message Body"></textarea>
     <div>
@@ -189,21 +181,18 @@
     </div>
   </div>
 
-  <!-- Buttons -->
   <div class="btns">
     <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
     <button class="btn" onclick="clearAll()">Logout</button>
   </div>
 
   <!-- Status -->
-  <div class="status" id="status">
-    <span id="statusText"></span>
-  </div>
+  <div class="status" id="status"></div>
 
-  <!-- Progress Bar with Counter -->
+  <!-- Live Progress -->
   <div class="progress-wrap" id="progressWrap">
-    <div class="progress-info">
-      <span id="progressLabel">Sending emails...</span>
+    <div class="progress-top">
+      <span class="progress-label" id="progressLabel">Sending emails...</span>
       <span class="progress-counter" id="progressCounter">0/0</span>
     </div>
     <div class="progress-bar-bg">
@@ -257,20 +246,19 @@
     document.getElementById('logBody').innerHTML = '';
     document.getElementById('progressWrap').className = 'progress-wrap';
     document.getElementById('progressBar').style.width = '0%';
-    document.getElementById('progressCounter').textContent = '0/0';
   }
 
   function showStatus(msg, type) {
     const s = document.getElementById('status');
-    document.getElementById('statusText').textContent = msg;
+    s.textContent = msg;
     s.className = 'status ' + type + ' show';
   }
 
-  function updateProgress(done, total) {
-    const pct = Math.round((done / total) * 100);
+  function setProgress(done, total) {
+    const pct = total > 0 ? Math.round((done / total) * 100) : 0;
     document.getElementById('progressBar').style.width = pct + '%';
     document.getElementById('progressCounter').textContent = done + '/' + total;
-    document.getElementById('progressLabel').textContent = done === total ? 'Done!' : 'Sending emails...';
+    document.getElementById('progressLabel').textContent = done >= total ? 'Done!' : 'Sending emails...';
   }
 
   async function sendEmails() {
@@ -289,58 +277,76 @@
     btn.disabled = true;
     btn.textContent = 'Sending...';
 
-    // Show progress
+    // Show progress bar
     document.getElementById('progressWrap').className = 'progress-wrap show';
-    updateProgress(0, recipients.length);
+    setProgress(0, recipients.length);
     showStatus('Sending ' + recipients.length + ' emails...', 'loading');
 
-    // Show log table with pending rows
+    // Build log table rows
     const logBody = document.getElementById('logBody');
     document.getElementById('logWrap').className = 'log-wrap show';
     logBody.innerHTML = recipients.map((email, i) =>
       '<tr id="row-' + i + '">' +
         '<td>' + (i+1) + '</td>' +
         '<td>' + email + '</td>' +
-        '<td>' + new Date().toLocaleTimeString() + '</td>' +
-        '<td><span class="badge sending">Sending...</span></td>' +
+        '<td id="time-' + i + '">--</td>' +
+        '<td><span class="badge sending" id="badge-' + i + '">Pending</span></td>' +
       '</tr>'
     ).join('');
 
-    try {
-      const res = await fetch('/api/send-email', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ gmailAddress, appPassword, recipients, subject, body, senderName })
-      });
+    let sentCount = 0;
+    let failCount = 0;
 
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Server error');
+    // Send ONE BY ONE — real time update
+    for (let i = 0; i < recipients.length; i++) {
+      const email = recipients[i];
 
-      // Update rows one by one with animation
-      let doneCount = 0;
-      for (let i = 0; i < data.results.length; i++) {
-        const result = data.results[i];
-        const badge = document.querySelector('#row-' + i + ' .badge');
-        if (badge) {
-          badge.className = 'badge ' + result.status;
-          badge.textContent = result.status === 'sent' ? 'Sent' : 'Failed';
+      // Mark current as sending
+      const badge = document.getElementById('badge-' + i);
+      const timeCell = document.getElementById('time-' + i);
+      badge.textContent = 'Sending...';
+      badge.className = 'badge sending';
+      timeCell.textContent = new Date().toLocaleTimeString();
+
+      // Scroll row into view
+      const row = document.getElementById('row-' + i);
+      if (row) row.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+      try {
+        const res = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ gmailAddress, appPassword, to: email, subject, body, senderName })
+        });
+
+        const data = await res.json();
+
+        if (data.status === 'sent') {
+          badge.className = 'badge sent';
+          badge.textContent = 'Sent';
+          sentCount++;
+        } else {
+          badge.className = 'badge failed';
+          badge.textContent = 'Failed';
+          failCount++;
         }
-        if (result.status === 'sent') doneCount++;
-        updateProgress(i + 1, recipients.length);
-        // Small delay so counter animates visually
-        await new Promise(r => setTimeout(r, 60));
+      } catch (err) {
+        badge.className = 'badge failed';
+        badge.textContent = 'Failed';
+        failCount++;
       }
 
-      showStatus(data.sentCount + '/' + recipients.length + ' emails sent!', 'success');
-      updateProgress(recipients.length, recipients.length);
+      // Update counter after each email
+      setProgress(i + 1, recipients.length);
+      showStatus('Sending... ' + (i+1) + '/' + recipients.length + ' | Sent: ' + sentCount + ' | Failed: ' + failCount, 'loading');
+    }
 
-    } catch (err) {
-      recipients.forEach((_, i) => {
-        const badge = document.querySelector('#row-' + i + ' .badge');
-        if (badge) { badge.className = 'badge failed'; badge.textContent = 'Failed'; }
-      });
-      updateProgress(0, recipients.length);
-      showStatus('Error: ' + err.message, 'error');
+    // Final status
+    setProgress(recipients.length, recipients.length);
+    if (failCount === 0) {
+      showStatus('All ' + sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
+    } else {
+      showStatus('Done! Sent: ' + sentCount + ' | Failed: ' + failCount + ' | Total: ' + recipients.length, sentCount > 0 ? 'success' : 'error');
     }
 
     btn.disabled = false;
