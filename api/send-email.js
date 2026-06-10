@@ -1,7 +1,6 @@
 import nodemailer from "nodemailer";
 
 export default async function handler(req, res) {
-  // CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
@@ -10,12 +9,10 @@ export default async function handler(req, res) {
 
   const { gmailAddress, appPassword, recipients, subject, body, senderName } = req.body;
 
-  // Validation
   if (!gmailAddress || !appPassword || !recipients?.length || !subject || !body) {
     return res.status(400).json({ error: "All fields are required!" });
   }
 
-  // Gmail SMTP
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
@@ -27,22 +24,16 @@ export default async function handler(req, res) {
     tls: { rejectUnauthorized: false },
   });
 
-  // Plain text only — inbox friendly, low spam score
-  function makeTextEmail(bodyText, sender) {
+  function makeText(bodyText, sender) {
     return bodyText + "\n\n--\n" + (sender || gmailAddress);
   }
 
-  // Simple clean HTML — no fancy design, just like a personal email
-  function makeHtmlEmail(bodyText, sender) {
-    // Convert newlines to <br> for HTML
+  function makeHtml(bodyText, sender) {
     const htmlBody = bodyText.replace(/\n/g, "<br>");
     return `<!DOCTYPE html>
 <html>
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-</head>
-<body style="margin:0;padding:20px;font-family:Arial,sans-serif;font-size:15px;color:#222;line-height:1.7;background:#ffffff;">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
+<body style="margin:0;padding:20px;font-family:Arial,sans-serif;font-size:15px;color:#222;line-height:1.7;background:#fff;">
   <div style="max-width:560px;margin:0 auto;">
     ${htmlBody}
     <br><br>
@@ -63,8 +54,8 @@ export default async function handler(req, res) {
         to: email,
         replyTo: gmailAddress,
         subject: subject,
-        text: makeTextEmail(body, senderName),
-        html: makeHtmlEmail(body, senderName),
+        text: makeText(body, senderName),
+        html: makeHtml(body, senderName),
       });
       results.push({ email, status: "sent" });
     } catch (err) {
