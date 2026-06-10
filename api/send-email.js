@@ -19,6 +19,10 @@ export default async function handler(req, res) {
     secure: false,
     auth: { user: gmailAddress, pass: appPassword },
     tls: { rejectUnauthorized: false },
+    pool: true,
+    maxConnections: 5,
+    rateDelta: 1000,
+    rateLimit: 5,
   });
 
   const htmlBody = body.replace(/\n/g, "<br>");
