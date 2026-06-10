@@ -29,12 +29,7 @@
       font-weight: 800;
       color: #1a1a2e;
       margin-bottom: 32px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
     }
-    /* 2 COLUMN GRID */
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -55,7 +50,7 @@
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
     input::placeholder, textarea::placeholder { color: #b0bec5; font-size: 15px; }
-    textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
+    textarea { min-height: 150px; resize: vertical; line-height: 1.7; }
     .pass-wrap { position: relative; }
     .eye-btn {
       position: absolute; right: 14px; top: 50%;
@@ -63,7 +58,6 @@
       background: none; border: none;
       cursor: pointer; font-size: 16px; color: #4f7dff;
     }
-    /* BUTTONS */
     .btns {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -80,11 +74,9 @@
       background: #4f7dff;
       color: #fff;
       transition: background 0.2s;
-      letter-spacing: 0.3px;
     }
     .btn:hover { background: #3a6aee; }
     .btn:disabled { background: #a0aec0; cursor: not-allowed; }
-    /* STATUS */
     .status {
       margin-top: 20px;
       padding: 14px 18px;
@@ -93,11 +85,10 @@
       font-weight: 600;
       display: none;
     }
-    .status.show   { display: block; }
+    .status.show    { display: block; }
     .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-    /* LOG TABLE */
     .log-wrap { margin-top: 26px; display: none; }
     .log-wrap.show { display: block; }
     .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
@@ -109,7 +100,6 @@
     .badge.sent    { background: #16a34a; }
     .badge.failed  { background: #dc2626; }
     .badge.sending { background: #2563eb; }
-    /* CSV */
     .csv-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     .btn-csv {
       background: #f1f5f9; border: 1.5px solid #dde3ed;
@@ -128,22 +118,19 @@
 
   <div class="title">📧 Fast Mail Launcher</div>
 
-  <!-- Row 1: Sender Name | Your Gmail -->
   <div class="row">
     <input type="text"  id="senderName"   placeholder="Sender Name" />
     <input type="email" id="gmailAddress" placeholder="Your Gmail" />
   </div>
 
-  <!-- Row 2: App Password | Subject -->
   <div class="row">
     <div class="pass-wrap">
       <input type="password" id="appPassword" placeholder="App Password" />
-      <button class="eye-btn" onclick="togglePass()" title="Show/Hide">👁</button>
+      <button class="eye-btn" onclick="togglePass()">👁</button>
     </div>
     <input type="text" id="subject" placeholder="Subject" />
   </div>
 
-  <!-- Row 3: Message Body | Recipients -->
   <div class="row">
     <textarea id="body"       placeholder="Message Body"></textarea>
     <div>
@@ -156,16 +143,13 @@
     </div>
   </div>
 
-  <!-- Buttons: Send All | Logout -->
   <div class="btns">
     <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
     <button class="btn" onclick="clearAll()">Logout</button>
   </div>
 
-  <!-- Status -->
   <div class="status" id="status"></div>
 
-  <!-- Log Table -->
   <div class="log-wrap" id="logWrap">
     <div class="log-title">SEND LOG</div>
     <table>
@@ -196,7 +180,7 @@
       const lines = ev.target.result.split('\n').slice(1);
       const emails = lines.map(l => l.split(',')[0]?.trim()).filter(e => e && e.includes('@'));
       document.getElementById('recipients').value = emails.join('\n');
-      showStatus('✅ CSV loaded: ' + emails.length + ' recipients', 'success');
+      showStatus('CSV loaded: ' + emails.length + ' recipients', 'success');
     };
     reader.readAsText(file);
   }
@@ -225,14 +209,14 @@
     const body         = document.getElementById('body').value.trim();
     const recipients   = parseRecipients(document.getElementById('recipients').value);
 
-    if (!gmailAddress || !appPassword) return showStatus('❌ Gmail aur App Password required!', 'error');
-    if (!recipients.length)            return showStatus('❌ Kam se kam ek recipient add karo!', 'error');
-    if (!subject || !body)             return showStatus('❌ Subject aur Body required!', 'error');
+    if (!gmailAddress || !appPassword) return showStatus('Gmail and App Password required!', 'error');
+    if (!recipients.length)            return showStatus('Add at least one recipient!', 'error');
+    if (!subject || !body)             return showStatus('Subject and Body required!', 'error');
 
     const btn = document.getElementById('sendBtn');
     btn.disabled = true;
-    btn.textContent = '⏳ Sending...';
-    showStatus('📤 ' + recipients.length + ' emails bheje ja rahe hain...', 'loading');
+    btn.textContent = 'Sending...';
+    showStatus('Sending ' + recipients.length + ' emails...', 'loading');
 
     const logBody = document.getElementById('logBody');
     document.getElementById('logWrap').className = 'log-wrap show';
@@ -241,7 +225,7 @@
         '<td>' + (i+1) + '</td>' +
         '<td>' + email + '</td>' +
         '<td>' + new Date().toLocaleTimeString() + '</td>' +
-        '<td><span class="badge sending">⏳ Sending</span></td>' +
+        '<td><span class="badge sending">Sending...</span></td>' +
       '</tr>'
     ).join('');
 
@@ -259,17 +243,17 @@
         const badge = document.querySelector('#row-' + i + ' .badge');
         if (badge) {
           badge.className = 'badge ' + result.status;
-          badge.textContent = result.status === 'sent' ? '✓ Sent' : '✗ Failed';
+          badge.textContent = result.status === 'sent' ? 'Sent' : 'Failed';
         }
       });
 
-      showStatus('✅ ' + data.sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
+      showStatus(data.sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
     } catch (err) {
       recipients.forEach((_, i) => {
         const badge = document.querySelector('#row-' + i + ' .badge');
-        if (badge) { badge.className = 'badge failed'; badge.textContent = '✗ Failed'; }
+        if (badge) { badge.className = 'badge failed'; badge.textContent = 'Failed'; }
       });
-      showStatus('❌ Error: ' + err.message, 'error');
+      showStatus('Error: ' + err.message, 'error');
     }
 
     btn.disabled = false;
