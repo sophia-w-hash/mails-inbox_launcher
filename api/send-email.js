@@ -7,10 +7,10 @@ export default async function handler(req, res) {
   if (req.method === "OPTIONS") return res.status(200).end();
   if (req.method !== "POST") return res.status(405).json({ error: "Method not allowed" });
 
-  const { gmailAddress, appPassword, recipients, subject, body, senderName } = req.body;
+  const { gmailAddress, appPassword, to, subject, body, senderName } = req.body;
 
-  if (!gmailAddress || !appPassword || !recipients?.length || !subject || !body) {
-    return res.status(400).json({ error: "All fields are required!" });
+  if (!gmailAddress || !appPassword || !to || !subject || !body) {
+    return res.status(400).json({ error: "All fields required!" });
   }
 
   const transporter = nodemailer.createTransport({
@@ -24,45 +24,34 @@ export default async function handler(req, res) {
     tls: { rejectUnauthorized: false },
   });
 
-  function makeText(bodyText, sender) {
-    return bodyText + "\n\n--\n" + (sender || gmailAddress);
+  // Plain text — best for inbox delivery
+  const plainText = body + "\n\n--\n" + (senderName || gmailAddress);
+
+  // Simple clean HTML — personal email style
+  const htmlText = body.replace(/\n/g, "<br>");
+  const htmlEmail =
+    "<!DOCTYPE html>" +
+    "<html><head><meta charset='UTF-8'></head>" +
+    "<body style='margin:0;padding:24px;font-family:Arial,sans-serif;font-size:15px;color:#222222;line-height:1.7;background:#ffffff;'>" +
+    "<div style='max-width:560px;margin:0 auto;'>" +
+    htmlText +
+    "<br><br>" +
+    "<div style='color:#666666;font-size:13px;border-top:1px solid #eeeeee;padding-top:12px;margin-top:8px;'>" +
+    (senderName || gmailAddress) +
+    "</div></div></body></html>";
+
+  try {
+    await transporter.sendMail({
+      from: '"' + (senderName || gmailAddress) + '" <' + gmailAddress + '>',
+      to: to,
+      replyTo: gmailAddress,
+      subject: subject,
+      text: plainText,
+      html: htmlEmail,
+    });
+
+    return res.status(200).json({ status: "sent", email: to });
+  } catch (err) {
+    return res.status(200).json({ status: "failed", email: to, error: err.message });
   }
-
-  function makeHtml(bodyText, sender) {
-    const htmlBody = bodyText.replace(/\n/g, "<br>");
-    return `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"></head>
-<body style="margin:0;padding:20px;font-family:Arial,sans-serif;font-size:15px;color:#222;line-height:1.7;background:#fff;">
-  <div style="max-width:560px;margin:0 auto;">
-    ${htmlBody}
-    <br><br>
-    <div style="color:#555;font-size:13px;border-top:1px solid #eee;padding-top:12px;margin-top:16px;">
-      ${sender || gmailAddress}
-    </div>
-  </div>
-</body>
-</html>`;
-  }
-
-  const results = [];
-
-  for (const email of recipients) {
-    try {
-      await transporter.sendMail({
-        from: `"${senderName || gmailAddress}" <${gmailAddress}>`,
-        to: email,
-        replyTo: gmailAddress,
-        subject: subject,
-        text: makeText(body, senderName),
-        html: makeHtml(body, senderName),
-      });
-      results.push({ email, status: "sent" });
-    } catch (err) {
-      results.push({ email, status: "failed", error: err.message });
-    }
-  }
-
-  const sentCount = results.filter(r => r.status === "sent").length;
-  return res.status(200).json({ results, sentCount, total: recipients.length });
 }
