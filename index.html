@@ -1,377 +1,280 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MailFlow Pro</title>
+  <title>Fast Mail Launcher</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { background: #0f1117; color: #e2e8f0; font-family: 'Segoe UI', Arial, sans-serif; display: flex; min-height: 100vh; }
-
-    /* SIDEBAR */
-    .sidebar { width: 220px; background: #161b27; border-right: 1px solid #1e2535; display: flex; flex-direction: column; padding: 24px 0 0 0; position: fixed; height: 100vh; }
-    .logo { display: flex; align-items: center; gap: 10px; padding: 0 18px 24px 18px; }
-    .logo-icon { background: linear-gradient(135deg,#6366f1,#38bdf8); border-radius: 10px; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; font-size: 18px; }
-    .logo-title { font-weight: 800; font-size: 15px; color: #f1f5f9; }
-    .logo-sub { font-size: 10px; color: #6366f1; font-weight: 700; }
-    .nav-btn { background: transparent; border: none; border-left: 3px solid transparent; color: #8899aa; padding: 11px 18px; text-align: left; cursor: pointer; font-size: 13px; font-weight: 500; width: 100%; }
-    .nav-btn.active { background: #1e2535; border-left-color: #6366f1; color: #a5b4fc; font-weight: 700; }
-    .sidebar-footer { margin-top: auto; padding: 14px 18px; font-size: 11px; color: #334155; border-top: 1px solid #1e2535; }
-
-    /* MAIN */
-    .main { margin-left: 220px; flex: 1; display: flex; flex-direction: column; }
-    .header { background: #161b27; border-bottom: 1px solid #1e2535; padding: 18px 30px; display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 10; }
-    .header-title { font-weight: 800; font-size: 20px; color: #f1f5f9; }
-    .header-sub { font-size: 12px; color: #64748b; margin-top: 2px; }
-    .header-actions { display: flex; gap: 10px; }
-
-    /* BUTTONS */
-    .btn-clear { background: transparent; border: 1px solid #334155; color: #94a3b8; border-radius: 8px; padding: 7px 16px; cursor: pointer; font-size: 13px; font-weight: 600; }
-    .btn-launch { background: linear-gradient(135deg,#6366f1,#38bdf8); border: none; color: #fff; border-radius: 8px; padding: 7px 20px; cursor: pointer; font-size: 13px; font-weight: 700; }
-    .btn-launch:disabled { background: #374151; cursor: not-allowed; }
-    .btn-csv { background: #1e2535; border: 1px solid #334155; color: #94a3b8; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 12px; }
-    .var-btn { background: #1e2535; border: 1px solid #334155; color: #a5b4fc; border-radius: 20px; padding: 3px 12px; cursor: pointer; font-size: 12px; font-weight: 600; }
-
-    /* CARDS */
-    .tab-content { padding: 24px 30px; display: flex; flex-direction: column; gap: 20px; }
-    .card { background: #161b27; border: 1px solid #1e2535; border-radius: 12px; padding: 20px 24px; }
-    .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; }
-    .card-title { font-weight: 800; font-size: 12px; color: #94a3b8; letter-spacing: 1px; }
-    .card-hint { font-size: 12px; color: #6366f1; text-decoration: none; }
-    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-
-    /* FIELDS */
-    .field { display: flex; flex-direction: column; gap: 5px; }
-    .field label { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.8px; }
-    .field input, .field textarea { background: #0f1117; border: 1px solid #1e2535; border-radius: 8px; color: #e2e8f0; padding: 10px 13px; font-size: 14px; outline: none; width: 100%; font-family: inherit; transition: border 0.2s; }
-    .field input:focus, .field textarea:focus { border-color: #6366f1; }
-    .field textarea { resize: vertical; line-height: 1.7; }
-    .hint { font-size: 11px; color: #475569; }
+    body {
+      min-height: 100vh;
+      background: #eef2f7;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      padding: 30px 16px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 16px;
+      padding: 44px 40px 36px 40px;
+      width: 100%;
+      max-width: 920px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.09);
+    }
+    .title {
+      text-align: center;
+      font-size: 28px;
+      font-weight: 800;
+      color: #1a1a2e;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+    /* 2 COLUMN GRID */
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 16px 18px;
+      border: 1.5px solid #dde3ed;
+      border-radius: 10px;
+      font-size: 15px;
+      font-family: inherit;
+      color: #1a1a2e;
+      background: #fff;
+      outline: none;
+      transition: border 0.2s;
+    }
+    input:focus, textarea:focus { border-color: #4f7dff; }
+    input::placeholder, textarea::placeholder { color: #b0bec5; font-size: 15px; }
+    textarea { min-height: 150px; resize: vertical; line-height: 1.6; }
     .pass-wrap { position: relative; }
-    .eye-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #6366f1; cursor: pointer; font-size: 15px; }
-
-    /* VARS */
-    .vars-section { margin-top: 12px; }
-    .vars-label { font-size: 11px; font-weight: 700; color: #64748b; letter-spacing: 0.8px; margin-bottom: 7px; }
-    .vars-btns { display: flex; gap: 7px; margin-bottom: 5px; }
-
-    /* TIPS */
-    .tips-box { background: #0f1a2e; border: 1px solid #1e3a5f; border-radius: 10px; padding: 12px 16px; margin-top: 16px; }
-    .tips-title { font-size: 12px; font-weight: 700; color: #38bdf8; margin-bottom: 7px; }
-    .tips-list { display: flex; flex-direction: column; gap: 3px; }
-    .tips-list span { font-size: 11px; color: #64748b; }
-
-    /* LOGS */
-    .logs-stats { display: flex; gap: 10px; align-items: center; margin-bottom: 16px; }
-    .stat-box { background: #161b27; border: 1px solid #1e2535; border-radius: 8px; padding: 7px 16px; font-size: 13px; font-weight: 700; }
-    .stat-box.sent { color: #16a34a; } .stat-box.failed { color: #dc2626; } .stat-box.total { color: #64748b; }
-    .logs-table-wrap { background: #161b27; border: 1px solid #1e2535; border-radius: 12px; overflow: hidden; }
-    .logs-table { width: 100%; border-collapse: collapse; }
-    .logs-table thead tr { background: #1e2535; font-size: 11px; color: #64748b; font-weight: 700; letter-spacing: 1px; }
-    .logs-table th, .logs-table td { padding: 11px 14px; text-align: left; }
-    .logs-table tbody tr { border-top: 1px solid #1e2535; font-size: 13px; }
-    .logs-table tbody tr:nth-child(even) { background: #111520; }
-    .no-logs { text-align: center; color: #334155; padding: 40px !important; }
-
-    /* BADGES */
+    .eye-btn {
+      position: absolute; right: 14px; top: 50%;
+      transform: translateY(-50%);
+      background: none; border: none;
+      cursor: pointer; font-size: 16px; color: #4f7dff;
+    }
+    /* BUTTONS */
+    .btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+      margin-top: 6px;
+    }
+    .btn {
+      padding: 17px;
+      font-size: 17px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      background: #4f7dff;
+      color: #fff;
+      transition: background 0.2s;
+      letter-spacing: 0.3px;
+    }
+    .btn:hover { background: #3a6aee; }
+    .btn:disabled { background: #a0aec0; cursor: not-allowed; }
+    /* STATUS */
+    .status {
+      margin-top: 20px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+    }
+    .status.show   { display: block; }
+    .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
+    .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
+    .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+    /* LOG TABLE */
+    .log-wrap { margin-top: 26px; display: none; }
+    .log-wrap.show { display: block; }
+    .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    thead tr { background: #f1f5f9; }
+    th, td { padding: 10px 14px; text-align: left; border-bottom: 1px solid #e2e8f0; }
+    th { font-weight: 700; color: #64748b; font-size: 11px; letter-spacing: 0.8px; }
     .badge { border-radius: 6px; padding: 2px 10px; font-size: 11px; font-weight: 700; color: #fff; }
-    .badge.sent { background: #16a34a; } .badge.failed { background: #dc2626; }
-    .badge.pending { background: #d97706; } .badge.sending { background: #2563eb; }
-
-    /* TOAST */
-    .toast { position: fixed; bottom: 24px; right: 24px; color: #fff; border-radius: 10px; padding: 11px 20px; font-weight: 600; font-size: 13px; box-shadow: 0 4px 24px #0008; display: none; z-index: 999; }
-    .toast.success { background: #16a34a; } .toast.error { background: #dc2626; }
-    .toast.show { display: block; }
-
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: #0f1117; }
-    ::-webkit-scrollbar-thumb { background: #1e2535; border-radius: 3px; }
+    .badge.sent    { background: #16a34a; }
+    .badge.failed  { background: #dc2626; }
+    .badge.sending { background: #2563eb; }
+    /* CSV */
+    .csv-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+    .btn-csv {
+      background: #f1f5f9; border: 1.5px solid #dde3ed;
+      color: #64748b; border-radius: 8px;
+      padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600;
+    }
+    .csv-name { font-size: 12px; color: #64748b; }
+    @media (max-width: 620px) {
+      .row, .btns { grid-template-columns: 1fr; }
+      .card { padding: 24px 14px; }
+    }
   </style>
 </head>
 <body>
+<div class="card">
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">
-      <div class="logo-icon">✉️</div>
-      <div>
-        <div class="logo-title">MailFlow Pro</div>
-        <div class="logo-sub">SMTP BULK ENGINE</div>
+  <div class="title">📧 Fast Mail Launcher</div>
+
+  <!-- Row 1: Sender Name | Your Gmail -->
+  <div class="row">
+    <input type="text"  id="senderName"   placeholder="Sender Name" />
+    <input type="email" id="gmailAddress" placeholder="Your Gmail" />
+  </div>
+
+  <!-- Row 2: App Password | Subject -->
+  <div class="row">
+    <div class="pass-wrap">
+      <input type="password" id="appPassword" placeholder="App Password" />
+      <button class="eye-btn" onclick="togglePass()" title="Show/Hide">👁</button>
+    </div>
+    <input type="text" id="subject" placeholder="Subject" />
+  </div>
+
+  <!-- Row 3: Message Body | Recipients -->
+  <div class="row">
+    <textarea id="body"       placeholder="Message Body"></textarea>
+    <div>
+      <textarea id="recipients" placeholder="Recipients (comma or newline)"></textarea>
+      <div class="csv-row">
+        <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(event)" />
+        <button class="btn-csv" onclick="document.getElementById('csvFile').click()">📂 Upload CSV</button>
+        <span class="csv-name" id="csvName"></span>
       </div>
     </div>
-    <nav>
-      <button class="nav-btn active" onclick="showTab('composer')">📤  Campaign Composer</button>
-      <button class="nav-btn" onclick="showTab('logs')">📋  Queue & Logs</button>
-    </nav>
-    <div class="sidebar-footer">v2.0 • Gmail SMTP</div>
-  </aside>
+  </div>
 
-  <!-- Main -->
-  <main class="main">
+  <!-- Buttons: Send All | Logout -->
+  <div class="btns">
+    <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
+    <button class="btn" onclick="clearAll()">Logout</button>
+  </div>
 
-    <!-- Header -->
-    <div class="header">
-      <div>
-        <div class="header-title" id="headerTitle">Bulk Mail Campaign</div>
-        <div class="header-sub" id="headerSub">Gmail ID aur App Password se mail bhejo.</div>
-      </div>
-      <div class="header-actions">
-        <button class="btn-clear" onclick="clearAll()">🗑 Clear All</button>
-        <button class="btn-launch" id="launchBtn" onclick="sendEmails()">🚀 Launch Campaign</button>
-      </div>
-    </div>
+  <!-- Status -->
+  <div class="status" id="status"></div>
 
-    <!-- COMPOSER TAB -->
-    <div id="composerTab" class="tab-content">
+  <!-- Log Table -->
+  <div class="log-wrap" id="logWrap">
+    <div class="log-title">SEND LOG</div>
+    <table>
+      <thead>
+        <tr><th>#</th><th>RECIPIENT</th><th>TIME</th><th>STATUS</th></tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+    </table>
+  </div>
 
-      <!-- SMTP Credentials -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">GMAIL SMTP CREDENTIALS</span>
-          <a href="https://myaccount.google.com/apppasswords" target="_blank" class="card-hint">ⓘ App Password kaise banaye?</a>
-        </div>
-        <div class="grid-2">
-          <div class="field">
-            <label>✉ YOUR GMAIL ADDRESS</label>
-            <input type="email" id="gmailAddress" placeholder="yourname@gmail.com" />
-            <span class="hint">Jis Gmail se mail bhejna hai</span>
-          </div>
-          <div class="field">
-            <label>🔑 APP PASSWORD (16-CHAR CODE)</label>
-            <div class="pass-wrap">
-              <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" />
-              <button class="eye-btn" onclick="togglePass()">👁</button>
-            </div>
-            <span class="hint">Google Account → Security → App Passwords</span>
-          </div>
-          <div class="field">
-            <label>👤 SENDER DISPLAY NAME</label>
-            <input type="text" id="senderName" placeholder="My Company" />
-            <span class="hint">Recipient ko yeh naam dikhega</span>
-          </div>
-        </div>
-      </div>
+</div>
+<script>
+  function togglePass() {
+    const i = document.getElementById('appPassword');
+    i.type = i.type === 'password' ? 'text' : 'password';
+  }
 
-      <!-- Recipients & Message -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">RECIPIENTS & MESSAGE</span>
-          <span class="card-hint" id="recipientCount">0 Recipients</span>
-        </div>
+  function parseRecipients(text) {
+    return text.split(/[\n,]+/).map(e => e.trim()).filter(e => e.includes('@'));
+  }
 
-        <div class="field">
-          <label>📩 RECIPIENT EMAILS (comma ya newline se alag karo)</label>
-          <textarea id="recipients" rows="4" placeholder="user1@gmail.com&#10;user2@yahoo.com, user3@outlook.com" oninput="updateCount()"></textarea>
-          <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
-            <span class="hint">Ya CSV upload karo:</span>
-            <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(event)" />
-            <button class="btn-csv" onclick="document.getElementById('csvFile').click()">📂 Upload CSV</button>
-            <span class="hint" id="csvName"></span>
-          </div>
-        </div>
+  function handleCSV(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+    document.getElementById('csvName').textContent = file.name;
+    const reader = new FileReader();
+    reader.onload = (ev) => {
+      const lines = ev.target.result.split('\n').slice(1);
+      const emails = lines.map(l => l.split(',')[0]?.trim()).filter(e => e && e.includes('@'));
+      document.getElementById('recipients').value = emails.join('\n');
+      showStatus('✅ CSV loaded: ' + emails.length + ' recipients', 'success');
+    };
+    reader.readAsText(file);
+  }
 
-        <div class="vars-section">
-          <div class="vars-label">VARIABLES INSERT:</div>
-          <div class="vars-btns">
-            <button class="var-btn" onclick="insertVar('name')">{name}</button>
-            <button class="var-btn" onclick="insertVar('email')">{email}</button>
-            <button class="var-btn" onclick="insertVar('company')">{company}</button>
-          </div>
-          <div class="hint">💡 Click karke body mein variable insert karo</div>
-        </div>
+  function clearAll() {
+    ['senderName','gmailAddress','appPassword','subject','body','recipients'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    document.getElementById('csvName').textContent = '';
+    document.getElementById('status').className = 'status';
+    document.getElementById('logWrap').className = 'log-wrap';
+    document.getElementById('logBody').innerHTML = '';
+  }
 
-        <div class="field" style="margin-top:16px;">
-          <label>📌 EMAIL SUBJECT LINE</label>
-          <input type="text" id="subject" placeholder="Exciting news for you!" />
-        </div>
+  function showStatus(msg, type) {
+    const s = document.getElementById('status');
+    s.textContent = msg;
+    s.className = 'status ' + type + ' show';
+  }
 
-        <div class="field" style="margin-top:14px;">
-          <label>📝 EMAIL BODY (HTML supported)</label>
-          <textarea id="body" rows="9" placeholder="Hi {name},&#10;&#10;Yahan apna message likho...&#10;&#10;Best Regards,&#10;The Team"></textarea>
-        </div>
+  async function sendEmails() {
+    const gmailAddress = document.getElementById('gmailAddress').value.trim();
+    const appPassword  = document.getElementById('appPassword').value.trim();
+    const senderName   = document.getElementById('senderName').value.trim();
+    const subject      = document.getElementById('subject').value.trim();
+    const body         = document.getElementById('body').value.trim();
+    const recipients   = parseRecipients(document.getElementById('recipients').value);
 
-        <div class="tips-box">
-          <div class="tips-title">✅ Inbox Mein Jaane Ke Tips:</div>
-          <div class="tips-list">
-            <span>• Subject mein spam words mat use karo (FREE, WINNER, CLICK NOW)</span>
-            <span>• Gmail se roz 500 se zyada emails mat bhejo</span>
-            <span>• Pehle apne aap ko test email bhejo</span>
-            <span>• Plain simple text likho — zyada HTML avoid karo</span>
-          </div>
-        </div>
-      </div>
-    </div>
+    if (!gmailAddress || !appPassword) return showStatus('❌ Gmail aur App Password required!', 'error');
+    if (!recipients.length)            return showStatus('❌ Kam se kam ek recipient add karo!', 'error');
+    if (!subject || !body)             return showStatus('❌ Subject aur Body required!', 'error');
 
-    <!-- LOGS TAB -->
-    <div id="logsTab" class="tab-content" style="display:none;">
-      <div class="logs-stats">
-        <div class="stat-box sent">✅ Sent: <span id="sentCount">0</span></div>
-        <div class="stat-box failed">❌ Failed: <span id="failCount">0</span></div>
-        <div class="stat-box total">📧 Total: <span id="totalCount">0</span></div>
-        <button class="btn-clear" onclick="clearLogs()" style="margin-left:auto;">🗑 Clear Logs</button>
-      </div>
-      <div class="logs-table-wrap">
-        <table class="logs-table">
-          <thead>
-            <tr><th>#</th><th>RECIPIENT</th><th>SUBJECT</th><th>TIME</th><th>STATUS</th></tr>
-          </thead>
-          <tbody id="logsBody">
-            <tr><td colspan="5" class="no-logs">Koi campaign nahi chala abhi.</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+    const btn = document.getElementById('sendBtn');
+    btn.disabled = true;
+    btn.textContent = '⏳ Sending...';
+    showStatus('📤 ' + recipients.length + ' emails bheje ja rahe hain...', 'loading');
 
-  </main>
+    const logBody = document.getElementById('logBody');
+    document.getElementById('logWrap').className = 'log-wrap show';
+    logBody.innerHTML = recipients.map((email, i) =>
+      '<tr id="row-' + i + '">' +
+        '<td>' + (i+1) + '</td>' +
+        '<td>' + email + '</td>' +
+        '<td>' + new Date().toLocaleTimeString() + '</td>' +
+        '<td><span class="badge sending">⏳ Sending</span></td>' +
+      '</tr>'
+    ).join('');
 
-  <div id="toast" class="toast"></div>
-
-  <script>
-    let logs = [];
-
-    function showTab(tab) {
-      document.getElementById('composerTab').style.display = tab === 'composer' ? 'flex' : 'none';
-      document.getElementById('logsTab').style.display = tab === 'logs' ? 'block' : 'none';
-      document.querySelectorAll('.nav-btn').forEach((btn, i) => {
-        btn.classList.toggle('active', (tab === 'composer' && i === 0) || (tab === 'logs' && i === 1));
+    try {
+      const res = await fetch('/api/send-email', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gmailAddress, appPassword, recipients, subject, body, senderName })
       });
-      document.getElementById('headerTitle').textContent = tab === 'composer' ? 'Bulk Mail Campaign' : 'Queue & Logs';
-      document.getElementById('headerSub').textContent = tab === 'composer'
-        ? 'Gmail ID aur App Password se mail bhejo.'
-        : `Sent: ${logs.filter(l=>l.status==='sent').length} | Failed: ${logs.filter(l=>l.status==='failed').length} | Total: ${logs.length}`;
-      document.getElementById('launchBtn').style.display = tab === 'composer' ? 'block' : 'none';
-    }
 
-    function togglePass() {
-      const i = document.getElementById('appPassword');
-      i.type = i.type === 'password' ? 'text' : 'password';
-    }
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Server error');
 
-    function updateCount() {
-      const c = parseRecipients(document.getElementById('recipients').value).length;
-      document.getElementById('recipientCount').textContent = `${c} Recipient${c !== 1 ? 's' : ''}`;
-    }
-
-    function parseRecipients(text) {
-      return text.split(/[\n,]+/).map(e => e.trim()).filter(e => e.includes('@'));
-    }
-
-    function insertVar(v) {
-      const b = document.getElementById('body');
-      b.value += `{${v}}`;
-      b.focus();
-    }
-
-    function handleCSV(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      document.getElementById('csvName').textContent = file.name;
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const lines = e.target.result.split('\n').slice(1);
-        const emails = lines.map(l => l.split(',')[0]?.trim()).filter(e => e && e.includes('@'));
-        document.getElementById('recipients').value = emails.join('\n');
-        updateCount();
-        showToast(`✅ CSV loaded: ${emails.length} recipients`, 'success');
-      };
-      reader.readAsText(file);
-    }
-
-    function clearAll() {
-      ['gmailAddress','appPassword','senderName','recipients','subject','body'].forEach(id => {
-        document.getElementById(id).value = '';
+      data.results.forEach((result, i) => {
+        const badge = document.querySelector('#row-' + i + ' .badge');
+        if (badge) {
+          badge.className = 'badge ' + result.status;
+          badge.textContent = result.status === 'sent' ? '✓ Sent' : '✗ Failed';
+        }
       });
-      document.getElementById('csvName').textContent = '';
-      updateCount();
+
+      showStatus('✅ ' + data.sentCount + '/' + recipients.length + ' emails sent successfully!', 'success');
+    } catch (err) {
+      recipients.forEach((_, i) => {
+        const badge = document.querySelector('#row-' + i + ' .badge');
+        if (badge) { badge.className = 'badge failed'; badge.textContent = '✗ Failed'; }
+      });
+      showStatus('❌ Error: ' + err.message, 'error');
     }
 
-    function clearLogs() {
-      logs = [];
-      renderLogs();
-    }
-
-    async function sendEmails() {
-      const gmailAddress = document.getElementById('gmailAddress').value.trim();
-      const appPassword = document.getElementById('appPassword').value.trim();
-      const senderName = document.getElementById('senderName').value.trim();
-      const recipients = parseRecipients(document.getElementById('recipients').value);
-      const subject = document.getElementById('subject').value.trim();
-      const body = document.getElementById('body').value.trim();
-
-      if (!gmailAddress || !appPassword) return showToast('Gmail aur App Password required!', 'error');
-      if (!recipients.length) return showToast('Kam se kam ek recipient add karo!', 'error');
-      if (!subject || !body) return showToast('Subject aur Body required!', 'error');
-
-      const btn = document.getElementById('launchBtn');
-      btn.disabled = true;
-      btn.textContent = '⏳ Sending...';
-
-      const newLogs = recipients.map(email => ({
-        id: Date.now() + Math.random(),
-        email, status: 'pending',
-        time: new Date().toLocaleTimeString(), subject
-      }));
-      logs = [...newLogs, ...logs];
-      renderLogs();
-      showTab('logs');
-
-      try {
-        const res = await fetch('/api/send-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ gmailAddress, appPassword, recipients, subject, body, senderName })
-        });
-
-        const data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'Server error');
-
-        data.results.forEach(result => {
-          const log = logs.find(l => l.email === result.email && l.status === 'pending');
-          if (log) log.status = result.status;
-        });
-
-        renderLogs();
-        showToast(`✅ ${data.sentCount}/${recipients.length} emails sent!`, 'success');
-      } catch (err) {
-        newLogs.forEach(nl => {
-          const log = logs.find(l => l.id === nl.id);
-          if (log) log.status = 'failed';
-        });
-        renderLogs();
-        showToast(`❌ Error: ${err.message}`, 'error');
-      }
-
-      btn.disabled = false;
-      btn.textContent = '🚀 Launch Campaign';
-    }
-
-    function renderLogs() {
-      const tbody = document.getElementById('logsBody');
-      document.getElementById('sentCount').textContent = logs.filter(l=>l.status==='sent').length;
-      document.getElementById('failCount').textContent = logs.filter(l=>l.status==='failed').length;
-      document.getElementById('totalCount').textContent = logs.length;
-
-      if (!logs.length) {
-        tbody.innerHTML = '<tr><td colspan="5" class="no-logs">Koi campaign nahi chala abhi.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = logs.map((log, i) => `
-        <tr>
-          <td>${i+1}</td>
-          <td>${log.email}</td>
-          <td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${log.subject}</td>
-          <td style="color:#475569;">${log.time}</td>
-          <td><span class="badge ${log.status}">${{sent:'✓ Sent',failed:'✗ Failed',pending:'⏳ Pending',sending:'↗ Sending'}[log.status]||log.status}</span></td>
-        </tr>`).join('');
-    }
-
-    function showToast(msg, type='success') {
-      const t = document.getElementById('toast');
-      t.textContent = msg;
-      t.className = `toast ${type} show`;
-      setTimeout(() => t.classList.remove('show'), 3500);
-    }
-  </script>
+    btn.disabled = false;
+    btn.textContent = 'Send All';
+  }
+</script>
 </body>
 </html>
