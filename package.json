@@ -1,5 +1,7 @@
 {
-  "name": "pro-mail-launcher",
+  "name": "fast-mail-launcher",
   "version": "1.0.0",
-  "dependencies": {}
+  "dependencies": {
+    "nodemailer": "^6.9.9"
+  }
 }
