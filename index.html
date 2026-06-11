@@ -30,15 +30,12 @@
       color: #1a1a2e;
       margin-bottom: 30px;
     }
-
-    /* 2 COLUMN GRID */
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
       margin-bottom: 18px;
     }
-
     input, textarea {
       width: 100%;
       padding: 16px 18px;
@@ -53,15 +50,7 @@
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
     input::placeholder, textarea::placeholder { color: #b0bec5; }
-
-    /* Message Body + Recipients same height */
-    .row-tall { align-items: start; }
-    .row-tall textarea {
-      min-height: 160px;
-      resize: vertical;
-      line-height: 1.7;
-    }
-
+    textarea { min-height: 160px; resize: vertical; line-height: 1.7; }
     .pass-wrap { position: relative; }
     .eye-btn {
       position: absolute; right: 14px; top: 50%;
@@ -70,27 +59,13 @@
       cursor: pointer; font-size: 13px;
       color: #4f7dff; font-weight: 600;
     }
-
-    /* CSV row under recipients */
-    .csv-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-top: 8px;
-    }
+    .csv-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
     .btn-csv {
-      background: #f1f5f9;
-      border: 1.5px solid #dde3ed;
-      color: #64748b;
-      border-radius: 8px;
-      padding: 6px 14px;
-      font-size: 12px;
-      cursor: pointer;
-      font-weight: 600;
+      background: #f1f5f9; border: 1.5px solid #dde3ed;
+      color: #64748b; border-radius: 8px;
+      padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600;
     }
     .csv-name { font-size: 12px; color: #64748b; }
-
-    /* BUTTONS ROW — Send All | Logout */
     .btns {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -109,13 +84,7 @@
       transition: background 0.2s;
     }
     .btn:hover:not(:disabled) { background: #3a6aee; }
-    .btn:disabled {
-      background: #a0aec0;
-      cursor: not-allowed;
-      opacity: 0.85;
-    }
-
-    /* STATUS */
+    .btn:disabled { background: #a0aec0; cursor: not-allowed; }
     .status {
       margin-top: 18px;
       padding: 13px 18px;
@@ -128,16 +97,9 @@
     .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
-
-    /* PROGRESS */
     .progress-wrap { margin-top: 14px; display: none; }
     .progress-wrap.show { display: block; }
-    .progress-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 8px;
-    }
+    .progress-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
     .progress-label { font-size: 13px; font-weight: 600; color: #64748b; }
     .progress-counter { font-size: 16px; font-weight: 800; color: #2563eb; }
     .progress-bar-bg { width: 100%; height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
@@ -148,8 +110,6 @@
       transition: width 0.3s ease;
       width: 0%;
     }
-
-    /* LOG TABLE */
     .log-wrap { margin-top: 24px; display: none; }
     .log-wrap.show { display: block; }
     .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
@@ -162,7 +122,6 @@
     .badge.failed  { background: #dc2626; }
     .badge.pending { background: #94a3b8; }
     .badge.sending { background: #2563eb; }
-
     @media (max-width: 620px) {
       .row, .btns { grid-template-columns: 1fr; }
       .card { padding: 24px 14px; }
@@ -190,7 +149,7 @@
   </div>
 
   <!-- Row 3: Message Body | Recipients -->
-  <div class="row row-tall">
+  <div class="row">
     <textarea id="body" placeholder="Message Body" autocomplete="off"></textarea>
     <div>
       <textarea id="recipients" placeholder="Recipients (comma or newline)" autocomplete="off"></textarea>
@@ -204,7 +163,7 @@
 
   <!-- Row 4: Send All | Logout -->
   <div class="btns">
-    <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
+    <button class="btn" id="sendBtn"   onclick="sendEmails()">Send All</button>
     <button class="btn" id="logoutBtn" onclick="clearAll()">Logout</button>
   </div>
 
@@ -212,7 +171,7 @@
 
   <div class="progress-wrap" id="progressWrap">
     <div class="progress-top">
-      <span class="progress-label" id="progressLabel">Sending emails...</span>
+      <span class="progress-label"  id="progressLabel">Sending emails...</span>
       <span class="progress-counter" id="progressCounter">0/0</span>
     </div>
     <div class="progress-bar-bg">
@@ -265,10 +224,10 @@
     ['senderName','gmailAddress','appPassword','subject','body','recipients'].forEach(function(id) {
       document.getElementById(id).value = '';
     });
-    document.getElementById('csvName').textContent = '';
-    document.getElementById('status').className = 'status';
-    document.getElementById('logWrap').className = 'log-wrap';
-    document.getElementById('logBody').innerHTML = '';
+    document.getElementById('csvName').textContent   = '';
+    document.getElementById('status').className      = 'status';
+    document.getElementById('logWrap').className     = 'log-wrap';
+    document.getElementById('logBody').innerHTML     = '';
     document.getElementById('progressWrap').className = 'progress-wrap';
     document.getElementById('progressBar').style.width = '0%';
   }
@@ -281,9 +240,9 @@
 
   function setProgress(done, total) {
     var pct = total > 0 ? Math.round((done / total) * 100) : 0;
-    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressBar').style.width    = pct + '%';
     document.getElementById('progressCounter').textContent = done + '/' + total;
-    document.getElementById('progressLabel').textContent = done >= total ? 'Done!' : 'Sending emails...';
+    document.getElementById('progressLabel').textContent   = done >= total ? 'Done!' : 'Sending emails...';
   }
 
   async function sendEmails() {
@@ -298,7 +257,6 @@
     if (!recipients.length)            return showStatus('Add at least one recipient!', 'error');
     if (!subject || !body)             return showStatus('Subject and Body required!', 'error');
 
-    // Disable BOTH buttons while sending
     var sendBtn   = document.getElementById('sendBtn');
     var logoutBtn = document.getElementById('logoutBtn');
     sendBtn.disabled   = true;
@@ -328,7 +286,7 @@
       var badge    = document.getElementById('badge-' + i);
       var timeCell = document.getElementById('time-' + i);
 
-      badge.className  = 'badge sending';
+      badge.className   = 'badge sending';
       badge.textContent = 'Sending...';
       timeCell.textContent = new Date().toLocaleTimeString();
 
@@ -349,16 +307,16 @@
         var data = await res.json();
 
         if (data.status === 'sent') {
-          badge.className  = 'badge sent';
+          badge.className   = 'badge sent';
           badge.textContent = 'Sent';
           sentCount++;
         } else {
-          badge.className  = 'badge failed';
+          badge.className   = 'badge failed';
           badge.textContent = 'Failed';
           failCount++;
         }
       } catch (err) {
-        badge.className  = 'badge failed';
+        badge.className   = 'badge failed';
         badge.textContent = 'Failed';
         failCount++;
       }
@@ -378,7 +336,6 @@
       showStatus('Done! Sent: ' + sentCount + ' | Failed: ' + failCount + ' | Total: ' + recipients.length, sentCount > 0 ? 'success' : 'error');
     }
 
-    // Re-enable buttons after done
     sendBtn.disabled   = false;
     logoutBtn.disabled = false;
     sendBtn.textContent = 'Send All';
