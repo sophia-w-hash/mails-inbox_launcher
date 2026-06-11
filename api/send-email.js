@@ -13,38 +13,28 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "All fields required!" });
   }
 
-  // Unsubscribe link
-  const encoded = Buffer.from(to).toString("base64");
-  const unsubUrl = "https://" + req.headers.host + "/api/unsubscribe?e=" + encoded;
+  const encoded   = Buffer.from(to).toString("base64");
+  const unsubUrl  = "https://" + req.headers.host + "/api/unsubscribe?e=" + encoded;
 
   const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
     port: 587,
     secure: false,
-    auth: {
-      user: gmailAddress,
-      pass: appPassword,
-    },
+    auth: { user: gmailAddress, pass: appPassword },
     tls: { rejectUnauthorized: false },
   });
 
-  // Plain text — lowest spam score
   const plainText = body + "\n\n\nUnsubscribe: " + unsubUrl;
 
-  // Clean HTML — body only + tiny unsubscribe
-  const htmlBody = body.replace(/\n/g, "<br>");
+  const htmlBody  = body.replace(/\n/g, "<br>");
   const htmlEmail =
-    "<!DOCTYPE html>" +
-    "<html><head><meta charset='UTF-8'></head>" +
+    "<!DOCTYPE html><html><head><meta charset='UTF-8'></head>" +
     "<body style='margin:0;padding:24px;font-family:Arial,sans-serif;font-size:15px;color:#222;line-height:1.7;background:#fff;'>" +
     "<div style='max-width:560px;margin:0 auto;'>" +
     htmlBody +
     "<br><br>" +
-    "<div style='margin-top:16px;'>" +
     "<a href='" + unsubUrl + "' style='color:#cccccc;font-size:10px;text-decoration:none;'>unsubscribe</a>" +
-    "</div>" +
-    "</div>" +
-    "</body></html>";
+    "</div></body></html>";
 
   try {
     await transporter.sendMail({
@@ -58,7 +48,6 @@ export default async function handler(req, res) {
         "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
       },
     });
-
     return res.status(200).json({ status: "sent", email: to });
   } catch (err) {
     return res.status(200).json({ status: "failed", email: to, error: err.message });
