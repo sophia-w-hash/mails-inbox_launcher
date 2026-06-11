@@ -30,23 +30,18 @@
       color: #1a1a2e;
       margin-bottom: 30px;
     }
+
+    /* 2 COLUMN GRID */
     .row {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
       margin-bottom: 18px;
     }
-    .field label {
-      display: block;
-      font-size: 11px;
-      font-weight: 700;
-      color: #64748b;
-      letter-spacing: 0.8px;
-      margin-bottom: 6px;
-    }
+
     input, textarea {
       width: 100%;
-      padding: 15px 16px;
+      padding: 16px 18px;
       border: 1.5px solid #dde3ed;
       border-radius: 10px;
       font-size: 15px;
@@ -58,7 +53,15 @@
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
     input::placeholder, textarea::placeholder { color: #b0bec5; }
-    textarea { min-height: 150px; resize: vertical; line-height: 1.7; }
+
+    /* Message Body + Recipients same height */
+    .row-tall { align-items: start; }
+    .row-tall textarea {
+      min-height: 160px;
+      resize: vertical;
+      line-height: 1.7;
+    }
+
     .pass-wrap { position: relative; }
     .eye-btn {
       position: absolute; right: 14px; top: 50%;
@@ -67,11 +70,32 @@
       cursor: pointer; font-size: 13px;
       color: #4f7dff; font-weight: 600;
     }
+
+    /* CSV row under recipients */
+    .csv-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .btn-csv {
+      background: #f1f5f9;
+      border: 1.5px solid #dde3ed;
+      color: #64748b;
+      border-radius: 8px;
+      padding: 6px 14px;
+      font-size: 12px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .csv-name { font-size: 12px; color: #64748b; }
+
+    /* BUTTONS ROW — Send All | Logout */
     .btns {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 18px;
-      margin-top: 6px;
+      margin-top: 4px;
     }
     .btn {
       padding: 17px;
@@ -84,8 +108,14 @@
       color: #fff;
       transition: background 0.2s;
     }
-    .btn:hover { background: #3a6aee; }
-    .btn:disabled { background: #a0aec0; cursor: not-allowed; }
+    .btn:hover:not(:disabled) { background: #3a6aee; }
+    .btn:disabled {
+      background: #a0aec0;
+      cursor: not-allowed;
+      opacity: 0.85;
+    }
+
+    /* STATUS */
     .status {
       margin-top: 18px;
       padding: 13px 18px;
@@ -98,6 +128,8 @@
     .status.success { background: #f0fdf4; color: #16a34a; border: 1px solid #bbf7d0; }
     .status.error   { background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; }
     .status.loading { background: #eff6ff; color: #2563eb; border: 1px solid #bfdbfe; }
+
+    /* PROGRESS */
     .progress-wrap { margin-top: 14px; display: none; }
     .progress-wrap.show { display: block; }
     .progress-top {
@@ -116,6 +148,8 @@
       transition: width 0.3s ease;
       width: 0%;
     }
+
+    /* LOG TABLE */
     .log-wrap { margin-top: 24px; display: none; }
     .log-wrap.show { display: block; }
     .log-title { font-size: 12px; font-weight: 700; color: #64748b; letter-spacing: 1px; margin-bottom: 10px; }
@@ -128,13 +162,7 @@
     .badge.failed  { background: #dc2626; }
     .badge.pending { background: #94a3b8; }
     .badge.sending { background: #2563eb; }
-    .csv-row { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-    .btn-csv {
-      background: #f1f5f9; border: 1.5px solid #dde3ed;
-      color: #64748b; border-radius: 8px;
-      padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600;
-    }
-    .csv-name { font-size: 12px; color: #64748b; }
+
     @media (max-width: 620px) {
       .row, .btns { grid-template-columns: 1fr; }
       .card { padding: 24px 14px; }
@@ -146,39 +174,26 @@
 
   <div class="title">Fast Mail Launcher</div>
 
+  <!-- Row 1: Sender Name | Your Gmail -->
   <div class="row">
-    <div class="field">
-      <label>YOUR GMAIL</label>
-      <input type="email" id="gmailAddress" placeholder="yourname@gmail.com" autocomplete="off" />
-    </div>
-    <div class="field">
-      <label>APP PASSWORD</label>
-      <div class="pass-wrap">
-        <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" autocomplete="new-password" />
-        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">Show</button>
-      </div>
-    </div>
+    <input type="text"  id="senderName"   placeholder="Sender Name"  autocomplete="off" />
+    <input type="email" id="gmailAddress" placeholder="Your Gmail"   autocomplete="off" />
   </div>
 
+  <!-- Row 2: App Password | Subject -->
   <div class="row">
-    <div class="field">
-      <label>SENDER NAME</label>
-      <input type="text" id="senderName" placeholder="Alex" autocomplete="off" />
+    <div class="pass-wrap">
+      <input type="password" id="appPassword" placeholder="App Password" autocomplete="new-password" />
+      <button class="eye-btn" id="eyeBtn" onclick="togglePass()">Show</button>
     </div>
-    <div class="field">
-      <label>SUBJECT</label>
-      <input type="text" id="subject" placeholder="Quick question" autocomplete="off" />
-    </div>
+    <input type="text" id="subject" placeholder="Subject" autocomplete="off" />
   </div>
 
-  <div class="row">
-    <div class="field">
-      <label>MESSAGE BODY</label>
-      <textarea id="body" placeholder="Hi, I checked your website..." autocomplete="off"></textarea>
-    </div>
-    <div class="field">
-      <label>RECIPIENTS (comma or newline)</label>
-      <textarea id="recipients" placeholder="user1@gmail.com&#10;user2@gmail.com" autocomplete="off"></textarea>
+  <!-- Row 3: Message Body | Recipients -->
+  <div class="row row-tall">
+    <textarea id="body" placeholder="Message Body" autocomplete="off"></textarea>
+    <div>
+      <textarea id="recipients" placeholder="Recipients (comma or newline)" autocomplete="off"></textarea>
       <div class="csv-row">
         <input type="file" id="csvFile" accept=".csv" style="display:none" onchange="handleCSV(event)" />
         <button class="btn-csv" onclick="document.getElementById('csvFile').click()">Upload CSV</button>
@@ -187,9 +202,10 @@
     </div>
   </div>
 
+  <!-- Row 4: Send All | Logout -->
   <div class="btns">
     <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
-    <button class="btn" onclick="clearAll()">Logout</button>
+    <button class="btn" id="logoutBtn" onclick="clearAll()">Logout</button>
   </div>
 
   <div class="status" id="status"></div>
@@ -246,7 +262,7 @@
   }
 
   function clearAll() {
-    ['gmailAddress','appPassword','senderName','subject','body','recipients'].forEach(function(id) {
+    ['senderName','gmailAddress','appPassword','subject','body','recipients'].forEach(function(id) {
       document.getElementById(id).value = '';
     });
     document.getElementById('csvName').textContent = '';
@@ -282,9 +298,12 @@
     if (!recipients.length)            return showStatus('Add at least one recipient!', 'error');
     if (!subject || !body)             return showStatus('Subject and Body required!', 'error');
 
-    var btn = document.getElementById('sendBtn');
-    btn.disabled = true;
-    btn.textContent = 'Sending...';
+    // Disable BOTH buttons while sending
+    var sendBtn   = document.getElementById('sendBtn');
+    var logoutBtn = document.getElementById('logoutBtn');
+    sendBtn.disabled   = true;
+    logoutBtn.disabled = true;
+    sendBtn.textContent = 'Sending...';
 
     document.getElementById('progressWrap').className = 'progress-wrap show';
     setProgress(0, recipients.length);
@@ -305,11 +324,11 @@
     var failCount = 0;
 
     for (var i = 0; i < recipients.length; i++) {
-      var email = recipients[i];
-      var badge = document.getElementById('badge-' + i);
+      var email    = recipients[i];
+      var badge    = document.getElementById('badge-' + i);
       var timeCell = document.getElementById('time-' + i);
 
-      badge.className = 'badge sending';
+      badge.className  = 'badge sending';
       badge.textContent = 'Sending...';
       timeCell.textContent = new Date().toLocaleTimeString();
 
@@ -318,28 +337,28 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            senderName: senderName,
             gmailAddress: gmailAddress,
-            appPassword: appPassword,
-             subject: subject,
-            body: body
-             to: email,
+            appPassword:  appPassword,
+            senderName:   senderName,
+            to:           email,
+            subject:      subject,
+            body:         body
           })
         });
 
         var data = await res.json();
 
         if (data.status === 'sent') {
-          badge.className = 'badge sent';
+          badge.className  = 'badge sent';
           badge.textContent = 'Sent';
           sentCount++;
         } else {
-          badge.className = 'badge failed';
+          badge.className  = 'badge failed';
           badge.textContent = 'Failed';
           failCount++;
         }
       } catch (err) {
-        badge.className = 'badge failed';
+        badge.className  = 'badge failed';
         badge.textContent = 'Failed';
         failCount++;
       }
@@ -359,8 +378,10 @@
       showStatus('Done! Sent: ' + sentCount + ' | Failed: ' + failCount + ' | Total: ' + recipients.length, sentCount > 0 ? 'success' : 'error');
     }
 
-    btn.disabled = false;
-    btn.textContent = 'Send All';
+    // Re-enable buttons after done
+    sendBtn.disabled   = false;
+    logoutBtn.disabled = false;
+    sendBtn.textContent = 'Send All';
   }
 </script>
 </body>
