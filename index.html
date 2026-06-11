@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pro Mail Launcher</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fast Mail Launcher</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
@@ -28,24 +28,7 @@
       font-size: 28px;
       font-weight: 800;
       color: #1a1a2e;
-      margin-bottom: 6px;
-    }
-    .subtitle {
-      text-align: center;
-      font-size: 13px;
-      color: #64748b;
-      margin-bottom: 24px;
-    }
-    .info-box {
-      background: #f0fdf4;
-      border: 1px solid #bbf7d0;
-      border-radius: 10px;
-      padding: 11px 18px;
-      font-size: 13px;
-      color: #16a34a;
-      font-weight: 600;
-      margin-bottom: 22px;
-      text-align: center;
+      margin-bottom: 30px;
     }
     .row {
       display: grid;
@@ -63,10 +46,10 @@
     }
     input, textarea {
       width: 100%;
-      padding: 14px 16px;
+      padding: 15px 16px;
       border: 1.5px solid #dde3ed;
       border-radius: 10px;
-      font-size: 14px;
+      font-size: 15px;
       font-family: inherit;
       color: #1a1a2e;
       background: #fff;
@@ -75,7 +58,7 @@
     }
     input:focus, textarea:focus { border-color: #4f7dff; }
     input::placeholder, textarea::placeholder { color: #b0bec5; }
-    textarea { min-height: 140px; resize: vertical; line-height: 1.7; }
+    textarea { min-height: 150px; resize: vertical; line-height: 1.7; }
     .pass-wrap { position: relative; }
     .eye-btn {
       position: absolute; right: 14px; top: 50%;
@@ -125,10 +108,7 @@
     }
     .progress-label { font-size: 13px; font-weight: 600; color: #64748b; }
     .progress-counter { font-size: 16px; font-weight: 800; color: #2563eb; }
-    .progress-bar-bg {
-      width: 100%; height: 8px;
-      background: #e2e8f0; border-radius: 99px; overflow: hidden;
-    }
+    .progress-bar-bg { width: 100%; height: 8px; background: #e2e8f0; border-radius: 99px; overflow: hidden; }
     .progress-bar {
       height: 100%;
       background: linear-gradient(90deg, #4f7dff, #38bdf8);
@@ -155,7 +135,6 @@
       padding: 6px 14px; font-size: 12px; cursor: pointer; font-weight: 600;
     }
     .csv-name { font-size: 12px; color: #64748b; }
-    .link { color: #4f7dff; font-weight: 700; }
     @media (max-width: 620px) {
       .row, .btns { grid-template-columns: 1fr; }
       .card { padding: 24px 14px; }
@@ -165,32 +144,26 @@
 <body>
 <div class="card">
 
-  <div class="title">Pro Mail Launcher</div>
-  <div class="subtitle">Resend API — Inbox Delivery + Unsubscribe</div>
-
-  <div class="info-box">
-    ✅ Free 3000 emails/month — Get API Key:
-    <a class="link" href="https://resend.com" target="_blank">resend.com</a>
-  </div>
+  <div class="title">Fast Mail Launcher</div>
 
   <div class="row">
     <div class="field">
-      <label>RESEND API KEY</label>
-      <div class="pass-wrap">
-        <input type="password" id="apiKey" placeholder="re_xxxxxxxxxxxx" autocomplete="new-password" />
-        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">Show</button>
-      </div>
+      <label>YOUR GMAIL</label>
+      <input type="email" id="gmailAddress" placeholder="yourname@gmail.com" autocomplete="off" />
     </div>
     <div class="field">
-      <label>FROM EMAIL (verified on Resend)</label>
-      <input type="email" id="fromEmail" placeholder="you@yourdomain.com" autocomplete="off" />
+      <label>APP PASSWORD</label>
+      <div class="pass-wrap">
+        <input type="password" id="appPassword" placeholder="xxxx xxxx xxxx xxxx" autocomplete="new-password" />
+        <button class="eye-btn" id="eyeBtn" onclick="togglePass()">Show</button>
+      </div>
     </div>
   </div>
 
   <div class="row">
     <div class="field">
       <label>SENDER NAME</label>
-      <input type="text" id="fromName" placeholder="Alex" autocomplete="off" />
+      <input type="text" id="senderName" placeholder="Alex" autocomplete="off" />
     </div>
     <div class="field">
       <label>SUBJECT</label>
@@ -216,7 +189,7 @@
 
   <div class="btns">
     <button class="btn" id="sendBtn" onclick="sendEmails()">Send All</button>
-    <button class="btn" onclick="clearAll()">Clear</button>
+    <button class="btn" onclick="clearAll()">Logout</button>
   </div>
 
   <div class="status" id="status"></div>
@@ -244,7 +217,7 @@
 </div>
 <script>
   function togglePass() {
-    var i = document.getElementById('apiKey');
+    var i = document.getElementById('appPassword');
     var b = document.getElementById('eyeBtn');
     if (i.type === 'password') { i.type = 'text'; b.textContent = 'Hide'; }
     else { i.type = 'password'; b.textContent = 'Show'; }
@@ -273,7 +246,7 @@
   }
 
   function clearAll() {
-    ['apiKey','fromEmail','fromName','subject','body','recipients'].forEach(function(id) {
+    ['gmailAddress','appPassword','senderName','subject','body','recipients'].forEach(function(id) {
       document.getElementById(id).value = '';
     });
     document.getElementById('csvName').textContent = '';
@@ -298,17 +271,16 @@
   }
 
   async function sendEmails() {
-    var apiKey     = document.getElementById('apiKey').value.trim();
-    var fromEmail  = document.getElementById('fromEmail').value.trim();
-    var fromName   = document.getElementById('fromName').value.trim();
-    var subject    = document.getElementById('subject').value.trim();
-    var body       = document.getElementById('body').value.trim();
-    var recipients = parseRecipients(document.getElementById('recipients').value);
+    var gmailAddress = document.getElementById('gmailAddress').value.trim();
+    var appPassword  = document.getElementById('appPassword').value.trim();
+    var senderName   = document.getElementById('senderName').value.trim();
+    var subject      = document.getElementById('subject').value.trim();
+    var body         = document.getElementById('body').value.trim();
+    var recipients   = parseRecipients(document.getElementById('recipients').value);
 
-    if (!apiKey)            return showStatus('Resend API Key required!', 'error');
-    if (!fromEmail)         return showStatus('From Email required!', 'error');
-    if (!recipients.length) return showStatus('Add at least one recipient!', 'error');
-    if (!subject || !body)  return showStatus('Subject and Body required!', 'error');
+    if (!gmailAddress || !appPassword) return showStatus('Gmail and App Password required!', 'error');
+    if (!recipients.length)            return showStatus('Add at least one recipient!', 'error');
+    if (!subject || !body)             return showStatus('Subject and Body required!', 'error');
 
     var btn = document.getElementById('sendBtn');
     btn.disabled = true;
@@ -346,12 +318,12 @@
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            apiKey: apiKey,
-            fromEmail: fromEmail,
-            fromName: fromName,
-            to: email,
-            subject: subject,
+            senderName: senderName,
+            gmailAddress: gmailAddress,
+            appPassword: appPassword,
+             subject: subject,
             body: body
+             to: email,
           })
         });
 
